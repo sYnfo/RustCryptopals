@@ -1,5 +1,4 @@
 use utils::hex_to_bytes;
-use utils::bytes_to_hex;
 
 /// Returns a hex representation of XOR of two hex values
 pub fn fixed_xor(first: &[u8], second: &[u8]) -> Vec<u8> {
