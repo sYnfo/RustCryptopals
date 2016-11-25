@@ -4,6 +4,9 @@ use std::str;
 use utils::hex_to_bytes;
 use s1c2::fixed_xor;
 
+/// Scores ASCII test represented by byte array. The higher the score, the more common
+/// English characters the text contains. Letter frequencies are taken from
+/// https://en.wikipedia.org/wiki/Letter_frequency.
 fn score_text(text: &[u8]) -> f32 {
     let frequencies = "xzqkjupnlgeyihrmfsdcbwaot";
     let text = str::from_utf8(text).unwrap();
@@ -15,12 +18,14 @@ fn score_text(text: &[u8]) -> f32 {
     score as f32/text.len() as f32
 }
 
-
+/// Tries to decrypt text encrypted with a single character XOR
+/// encryption.
 pub fn decrypt_xor(ciphertext: &str) -> Option<(char, String)> {
     let cipherbytes = hex_to_bytes(ciphertext);
     let mut max = 0.0;
     let mut best_solution = None;
 
+    // 32 to 127 should cover printable ASCII characters
     for character in 32..128 {
         let cipher = vec![character; cipherbytes.len()];
         let plaintext = fixed_xor(&cipherbytes, &cipher);
