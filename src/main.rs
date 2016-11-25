@@ -1,6 +1,10 @@
 pub mod hex2base64;
 pub mod fixedxor;
+pub mod singlebytexor;
 pub mod utils;
+
+use utils::hex_to_bytes;
+use utils::bytes_to_hex;
 
 fn main() {
     println!("Set 1 Challenge 1: Convert hex to base64");
@@ -9,8 +13,14 @@ fn main() {
     println!("");
 
     println!("Set 1 Challenge 2: Fixed XOR");
-    let xord = fixedxor::fixed_xor("1c0111001f010100061a024b53535009181c",
-                                   "686974207468652062756c6c277320657965");
+    let first = hex_to_bytes("1c0111001f010100061a024b53535009181c");
+    let second = hex_to_bytes("686974207468652062756c6c277320657965");
+    let xord = bytes_to_hex(&fixedxor::fixed_xor(&first, &second));
     println!("    0x1c0111001f010100061a024b53535009181c XOR 0x686974207468652062756c6c277320657965 is 0x{}.",
              xord);
+    println!("");
+
+    println!("Set 1 Challenge 3: Single-byte XOR cipher");
+    let solution =
+    singlebytexor::decrypt_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736");
 }
