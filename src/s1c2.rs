@@ -1,6 +1,6 @@
 use utils::hex_to_bytes;
 
-/// Returns a hex representation of XOR of two hex values
+/// XORs two byte arrays and returns the result
 pub fn fixed_xor(first: &[u8], second: &[u8]) -> Vec<u8> {
     first.iter().zip(second).map(|(f, s)| {
         f ^ s
