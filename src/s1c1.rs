@@ -8,19 +8,19 @@ fn bytes_to_base64(decoded_bytes: &[u8]) -> String {
 
     for chunk in decoded_bytes.chunks(3) {
         let c0 = chunk[0];
-        let b = (c0 & 0xFC) >> 2;
+        let b = c0 >> 2;
         output.push(alphabet[b as usize]);
 
         let mut b = (c0 & 0x03) << 4;
 
         if let Some(c1) = chunk.get(1) {
-            b |= (c1 & 0xF0) >> 4;
+            b |= c1 >> 4;
             output.push(alphabet[b as usize]);
 
             let mut b = (c1 & 0x0F) << 2;
 
             if let Some(c2) = chunk.get(2) {
-                b |= (c2 & 0xC0) >> 6;
+                b |= c2 >> 6;
                 output.push(alphabet[b as usize]);
 
                 let b = c2 & 0x3F;
