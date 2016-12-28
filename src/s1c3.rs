@@ -1,10 +1,16 @@
-use std::str;
 use std::collections::HashMap;
 use std::cmp::Ordering;
 use std::ascii::AsciiExt;
 
 use utils::hex_to_bytes;
 use s1c2::fixed_xor;
+
+pub struct DecryptionResult {
+    pub ciphertext: Vec<u8>,
+    pub plaintext: Vec<u8>,
+    pub key: Vec<u8>,
+    pub score: f32
+}
 
 pub fn score_text(data: &[u8]) -> f32 {
     // Relative frequencies of English ASCII character
@@ -51,27 +57,27 @@ pub fn score_bytes(data: &[u8], expected_freq: &HashMap<u8, f32>) -> f32 {
 
 /// Tries to decrypt text encrypted with a single character XOR
 /// encryption.
-pub fn decrypt_xor(ciphertext: &str) -> Option<(char, Vec<u8>)> {
-    let cipherbytes = hex_to_bytes(ciphertext);
-
-    // 32 to 127 should cover printable ASCII characters
-    (32..128).map(|character| {
-        let cipher = vec![character; cipherbytes.len()];
-        let plaintext = fixed_xor(&cipherbytes, &cipher);
-        (character as char, plaintext)
-    }).min_by(|a, b| score_text(&a.1).partial_cmp(&score_text(&b.1))
-                                     .unwrap_or(Ordering::Equal))
+pub fn decrypt_xor(ciphertext: &[u8]) -> Option<DecryptionResult> {
+    (0..128).map(|key| {
+        let cipher = vec![key; ciphertext.len()];
+        let plaintext = fixed_xor(ciphertext, &cipher);
+        DecryptionResult { score: score_text(&plaintext), key: vec![key],
+                           plaintext: plaintext, ciphertext: ciphertext.to_vec() }
+    }).min_by(|a, b| a.score.partial_cmp(&b.score).unwrap_or(Ordering::Equal))
 }
 
 #[test]
 fn test_score_bytes() {
-    // assert!(score_bytes(" ", relative_frequencies) < score_bytes("e", relative_frequencies));
-    assert_eq!(score_text(&['Z' as u8]), score_text(&['z' as u8]));
-    assert!(score_text(&['$' as u8]) > score_text(&['a' as u8]));
+    assert!(score_text(&[b' ']) < score_text(&[b'e']));
+    assert_eq!(score_text(&[b'Z']), score_text(&[b'z']));
+    assert!(score_text(&[b'$']) > score_text(&[b'a']));
 }
 
 #[test]
 fn test_decrypt_xor() {
-    assert_eq!(decrypt_xor("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"),
-               Some(('X', Vec::from("Cooking MC's like a pound of bacon"))));
+    let input = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+    let result = decrypt_xor(&hex_to_bytes(input)).unwrap();
+    assert_eq!(result.ciphertext, hex_to_bytes(input));
+    assert_eq!(result.plaintext, Vec::from("Cooking MC's like a pound of bacon"));
+    assert_eq!(result.key, vec![b'X']);
 }
