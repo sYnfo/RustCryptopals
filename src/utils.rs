@@ -11,17 +11,7 @@ pub fn hex_to_bytes(hex_string: &str) -> Vec<u8> {
 
 /// Convert array of bytes to it's hex representation
 pub fn bytes_to_hex(bytes: &[u8]) -> String {
-    let alphabet: Vec<_> = "0123456789abcdef".chars().collect();
-    let mut output = String::new();
-
-    for byte in bytes {
-        let fraction = byte / 16;
-        output.push(alphabet[fraction as usize]);
-        let remainder = byte % 16;
-        output.push(alphabet[remainder as usize]);
-    }
-
-    output
+    bytes.iter().map(|b| format!("{:x}", b)).collect()
 }
 
 #[test]
