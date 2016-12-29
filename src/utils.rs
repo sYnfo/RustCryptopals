@@ -14,6 +14,15 @@ pub fn bytes_to_hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
+/// Computes the hamming distance of two arrays of bytes
+pub fn hamming(a: &[u8], b: &[u8]) -> Result<u32, &'static str> {
+    if a.len() == b.len() {
+        Ok(a.iter().zip(b).map(|(f, s)| (f ^ s).count_ones()).sum())
+    } else {
+        Err("Hamming distance is undefined for sequences of unequal lengths")
+    }
+}
+
 #[test]
 fn test_hex_to_bytes() {
     assert_eq!(hex_to_bytes("ff"), [255]);
@@ -27,4 +36,11 @@ fn test_bytes_to_hex() {
 #[test]
 fn test_bytes_to_hex_prefix() {
     assert_eq!(bytes_to_hex(&[1]), "01");
+}
+
+#[test]
+fn test_hamming() {
+    let input1 = "this is a test";
+    let input2 = "wokka wokka!!!";
+    assert_eq!(hamming(&Vec::from(input1), &Vec::from(input2)), Ok(37));
 }
