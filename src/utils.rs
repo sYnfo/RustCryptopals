@@ -11,7 +11,7 @@ pub fn hex_to_bytes(hex_string: &str) -> Vec<u8> {
 
 /// Convert array of bytes to it's hex representation
 pub fn bytes_to_hex(bytes: &[u8]) -> String {
-    bytes.iter().map(|b| format!("{:x}", b)).collect()
+    bytes.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
 #[test]
@@ -22,4 +22,9 @@ fn test_hex_to_bytes() {
 #[test]
 fn test_bytes_to_hex() {
     assert_eq!(bytes_to_hex(&[255]), "ff");
+}
+
+#[test]
+fn test_bytes_to_hex_prefix() {
+    assert_eq!(bytes_to_hex(&[1]), "01");
 }
