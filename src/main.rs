@@ -2,6 +2,7 @@ pub mod s1c1;
 pub mod s1c2;
 pub mod s1c3;
 pub mod s1c4;
+pub mod s1c5;
 pub mod utils;
 
 use utils::hex_to_bytes;
@@ -38,4 +39,13 @@ fn main() {
     println!("    line {}", String::from_utf8(result.ciphertext).unwrap());
     println!("    decrypted with {}", result.key[0] as char);
     println!("    contains {}", String::from_utf8(result.plaintext).unwrap());
+    println!("");
+
+    println!("Set 1 Challenge 5: Implement repeating-key XOR");
+    let plaintext = "Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal";
+    let key = "ICE";
+    let result = s1c5::repeating_key_xor(&Vec::from(plaintext), &Vec::from(key));
+    println!("    '{}'", plaintext);
+    println!("    XOR encrypted with '{}'", key);
+    println!("    is '{}'", bytes_to_hex(&result));
 }
