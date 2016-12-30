@@ -5,14 +5,14 @@ use std::cmp::Ordering;
 
 use s1c3::{decrypt_xor, DecryptionResult};
 
-use utils::hex_to_bytes;
+use utils::{hex_to_bytes, float_cmp};
 
 pub fn find_encrypted_string(file_name: &str) -> io::Result<Option<DecryptionResult>> {
     let file = BufReader::new(try!(File::open(file_name)));
     let result = file.lines().filter_map(|line| {
         let line = line.expect("Something went wrong when parsing the file!");
         decrypt_xor(&hex_to_bytes(&line))
-    }).min_by(|a, b| a.score.partial_cmp(&b.score).unwrap_or(Ordering::Equal));
+    }).min_by(|a, b| float_cmp(&a.score, &b.score));
     Ok(result)
 }
 

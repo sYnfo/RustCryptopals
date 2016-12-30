@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::cmp::Ordering;
 use std::ascii::AsciiExt;
 
-use utils::hex_to_bytes;
+use utils::{hex_to_bytes, float_cmp};
 use s1c2::fixed_xor;
 
 pub struct DecryptionResult {
@@ -63,7 +63,7 @@ pub fn decrypt_xor(ciphertext: &[u8]) -> Option<DecryptionResult> {
         let plaintext = fixed_xor(ciphertext, &cipher);
         DecryptionResult { score: score_text(&plaintext), key: vec![key],
                            plaintext: plaintext, ciphertext: ciphertext.to_vec() }
-    }).min_by(|a, b| a.score.partial_cmp(&b.score).unwrap_or(Ordering::Equal))
+    }).min_by(|a, b| float_cmp(&a.score, &b.score))
 }
 
 #[test]

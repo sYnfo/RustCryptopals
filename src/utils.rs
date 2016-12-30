@@ -1,3 +1,8 @@
+extern crate num;
+use self::num::traits::Float;
+use std::cmp::Ordering;
+
+
 /// Decode the input string from hex into individual bytes
 pub fn hex_to_bytes(hex_string: &str) -> Vec<u8> {
     let input_chars: Vec<_> = hex_string.chars().collect();
@@ -21,6 +26,10 @@ pub fn hamming(a: &[u8], b: &[u8]) -> Result<u32, &'static str> {
     } else {
         Err("Hamming distance is undefined for sequences of unequal lengths")
     }
+}
+
+pub fn float_cmp<T: Float>(a: &T, b: &T) -> Ordering {
+    a.partial_cmp(&b).unwrap_or(Ordering::Equal)
 }
 
 #[test]
