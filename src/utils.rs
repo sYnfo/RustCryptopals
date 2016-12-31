@@ -2,6 +2,13 @@ extern crate num;
 use self::num::traits::Float;
 use std::cmp::Ordering;
 
+pub struct DecryptionResult {
+    pub ciphertext: Vec<u8>,
+    pub plaintext: Vec<u8>,
+    pub key: Vec<u8>,
+    pub score: f32
+}
+
 
 /// Decode the input string from hex into individual bytes
 pub fn hex_to_bytes(hex_string: &str) -> Vec<u8> {

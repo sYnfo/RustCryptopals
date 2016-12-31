@@ -2,15 +2,9 @@ use std::collections::HashMap;
 use std::cmp::Ordering;
 use std::ascii::AsciiExt;
 
-use utils::{hex_to_bytes, float_cmp};
+use utils::{hex_to_bytes, float_cmp, DecryptionResult};
 use s1c2::fixed_xor;
 
-pub struct DecryptionResult {
-    pub ciphertext: Vec<u8>,
-    pub plaintext: Vec<u8>,
-    pub key: Vec<u8>,
-    pub score: f32
-}
 
 pub fn score_text(data: &[u8]) -> f32 {
     // Relative frequencies of English ASCII character

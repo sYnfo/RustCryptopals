@@ -3,10 +3,10 @@ pub mod s1c2;
 pub mod s1c3;
 pub mod s1c4;
 pub mod s1c5;
+pub mod s1c6;
 pub mod utils;
 
-use utils::hex_to_bytes;
-use utils::bytes_to_hex;
+use utils::{hex_to_bytes, bytes_to_hex, DecryptionResult};
 
 fn main() {
     println!("Set 1 Challenge 1: Convert hex to base64");
@@ -24,8 +24,8 @@ fn main() {
 
     println!("Set 1 Challenge 3: Single-byte XOR cipher");
     let ciphertext = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    if let Some(s1c3::DecryptionResult{plaintext: plaintext,
-                                       key: key, ..}) = s1c3::decrypt_xor(&hex_to_bytes(ciphertext)) {
+    if let Some(DecryptionResult{plaintext: plaintext,
+                                 key: key, ..}) = s1c3::decrypt_xor(&hex_to_bytes(ciphertext)) {
         println!("    Encrypted with '{}': {}", key[0] as char,
                  String::from_utf8_lossy(&plaintext));
         println!("");
