@@ -2,6 +2,13 @@ extern crate num;
 use self::num::traits::Float;
 use std::cmp::Ordering;
 
+pub struct DecryptionResult {
+    pub ciphertext: Vec<u8>,
+    pub plaintext: Option<Vec<u8>>,
+    pub key: Vec<u8>,
+    pub score: f32
+}
+
 
 /// Decode the input string from hex into individual bytes
 pub fn hex_to_bytes(hex_string: &str) -> Vec<u8> {
@@ -19,17 +26,17 @@ pub fn bytes_to_hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
-/// Computes the hamming distance of two arrays of bytes
-pub fn hamming(a: &[u8], b: &[u8]) -> Result<u32, &'static str> {
+/// Computes the relative hamming distance of two arrays of bytes
+pub fn hamming(a: &[u8], b: &[u8]) -> Result<f32, &'static str> {
     if a.len() == b.len() {
-        Ok(a.iter().zip(b).map(|(f, s)| (f ^ s).count_ones()).sum())
+        Ok(a.iter().zip(b).map(|(f, s)| (f ^ s).count_ones() as f32).sum::<f32>() / a.len() as f32)
     } else {
         Err("Hamming distance is undefined for sequences of unequal lengths")
     }
 }
 
 pub fn float_cmp<T: Float>(a: &T, b: &T) -> Ordering {
-    a.partial_cmp(&b).unwrap_or(Ordering::Equal)
+    a.partial_cmp(b).unwrap_or(Ordering::Equal)
 }
 
 #[test]
@@ -51,5 +58,5 @@ fn test_bytes_to_hex_prefix() {
 fn test_hamming() {
     let input1 = "this is a test";
     let input2 = "wokka wokka!!!";
-    assert_eq!(hamming(&Vec::from(input1), &Vec::from(input2)), Ok(37));
+    assert_eq!(hamming(&Vec::from(input1), &Vec::from(input2)), Ok(37f32 / input1.len() as f32));
 }

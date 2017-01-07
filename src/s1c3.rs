@@ -2,15 +2,9 @@ use std::collections::HashMap;
 use std::cmp::Ordering;
 use std::ascii::AsciiExt;
 
-use utils::{hex_to_bytes, float_cmp};
+use utils::{hex_to_bytes, float_cmp, DecryptionResult};
 use s1c2::fixed_xor;
 
-pub struct DecryptionResult {
-    pub ciphertext: Vec<u8>,
-    pub plaintext: Vec<u8>,
-    pub key: Vec<u8>,
-    pub score: f32
-}
 
 pub fn score_text(data: &[u8]) -> f32 {
     // Relative frequencies of English ASCII character
@@ -58,11 +52,11 @@ pub fn score_bytes(data: &[u8], expected_freq: &HashMap<u8, f32>) -> f32 {
 /// Tries to decrypt text encrypted with a single character XOR
 /// encryption.
 pub fn decrypt_xor(ciphertext: &[u8]) -> Option<DecryptionResult> {
-    (0..128).map(|key| {
+    (0..255).map(|key| {
         let cipher = vec![key; ciphertext.len()];
         let plaintext = fixed_xor(ciphertext, &cipher);
         DecryptionResult { score: score_text(&plaintext), key: vec![key],
-                           plaintext: plaintext, ciphertext: ciphertext.to_vec() }
+                           plaintext: Some(plaintext), ciphertext: ciphertext.to_vec() }
     }).min_by(|a, b| float_cmp(&a.score, &b.score))
 }
 
@@ -78,6 +72,6 @@ fn test_decrypt_xor() {
     let input = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let result = decrypt_xor(&hex_to_bytes(input)).unwrap();
     assert_eq!(result.ciphertext, hex_to_bytes(input));
-    assert_eq!(result.plaintext, Vec::from("Cooking MC's like a pound of bacon"));
+    assert_eq!(result.plaintext, Some(Vec::from("Cooking MC's like a pound of bacon")));
     assert_eq!(result.key, vec![b'X']);
 }

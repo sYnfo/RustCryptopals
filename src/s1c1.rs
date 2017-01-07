@@ -1,7 +1,7 @@
 use utils::hex_to_bytes;
 
 /// Encode the decoded bytes into Base64
-fn bytes_to_base64(decoded_bytes: &[u8]) -> String {
+pub fn bytes_to_base64(decoded_bytes: &[u8]) -> String {
     let mut output = String::new();
     let alphabet: Vec<_> =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".chars().collect();

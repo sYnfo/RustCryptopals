@@ -3,10 +3,10 @@ pub mod s1c2;
 pub mod s1c3;
 pub mod s1c4;
 pub mod s1c5;
+pub mod s1c6;
 pub mod utils;
 
-use utils::hex_to_bytes;
-use utils::bytes_to_hex;
+use utils::{hex_to_bytes, bytes_to_hex, DecryptionResult};
 
 fn main() {
     println!("Set 1 Challenge 1: Convert hex to base64");
@@ -24,10 +24,9 @@ fn main() {
 
     println!("Set 1 Challenge 3: Single-byte XOR cipher");
     let ciphertext = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    if let Some(s1c3::DecryptionResult{plaintext: plaintext,
-                                       key: key, ..}) = s1c3::decrypt_xor(&hex_to_bytes(ciphertext)) {
+    if let Some(DecryptionResult{plaintext, key, ..}) = s1c3::decrypt_xor(&hex_to_bytes(ciphertext)) {
         println!("    Encrypted with '{}': {}", key[0] as char,
-                 String::from_utf8_lossy(&plaintext));
+                 String::from_utf8_lossy(&plaintext.expect("Decryption failed!")));
         println!("");
     } else {
         println!("    Found no solution!");
@@ -38,7 +37,7 @@ fn main() {
     let result = s1c4::find_encrypted_string("src/files/challenge4.txt").unwrap().unwrap();
     println!("    line {}", String::from_utf8(result.ciphertext).unwrap());
     println!("    decrypted with {}", result.key[0] as char);
-    println!("    contains {}", String::from_utf8(result.plaintext).unwrap());
+    println!("    contains {}", String::from_utf8(result.plaintext.expect("Decryption failed!")).unwrap());
     println!("");
 
     println!("Set 1 Challenge 5: Implement repeating-key XOR");
@@ -48,4 +47,11 @@ fn main() {
     println!("    '{}'", plaintext);
     println!("    XOR encrypted with '{}'", key);
     println!("    is '{}'", bytes_to_hex(&result));
+    println!("");
+
+    println!("Set 1 Challenge 6: Break repeating-key XOR");
+    let input = s1c6::load_ciphertext("src/files/challenge6.txt");
+    let result = s1c6::decrypt_repeating_xor(&input);
+    println!("    key is '{}'", String::from_utf8_lossy(&result.key));
+    println!("");
 }

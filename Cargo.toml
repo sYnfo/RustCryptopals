@@ -5,3 +5,4 @@ authors = ["matt <matej.stuchlik@gmail.com>"]
 
 [dependencies]
 num = "0.1.36"
+itertools = "*"
